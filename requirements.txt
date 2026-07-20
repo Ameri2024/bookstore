@@ -34,6 +34,7 @@ msgpack==1.1.2
 packaging==26.2
 pillow==12.2.0
 platformdirs==4.10.0
+psycopg==3.3.4
 py-ubjson==0.16.1
 pycparser==3.0
 pycryptodome==3.23.0
