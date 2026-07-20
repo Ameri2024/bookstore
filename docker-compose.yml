@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: bookstore_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-bookstore}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-securepassword}
+      POSTGRES_DB: ${DB_NAME:-bookstore_db}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"  # only if you need external access
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-bookstore} -d ${DB_NAME:-bookstore_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build: .
+    container_name: bookstore_web
+    restart: unless-stopped
+    environment:
+      DJANGO_SETTINGS_MODULE: bookstore_backend.settings.production
+      # Read all environment variables from .env file
+      SECRET_KEY: ${SECRET_KEY}
+      DEBUG: ${DEBUG:-False}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1}
+      DB_NAME: ${DB_NAME:-bookstore_db}
+      DB_USER: ${DB_USER:-bookstore}
+      DB_PASSWORD: ${DB_PASSWORD:-securepassword}
+      DB_HOST: db
+      DB_PORT: 5432
+      KAVENEGAR_API_KEY: ${KAVENEGAR_API_KEY}
+      ZARINPAL_MERCHANT_CODE: ${ZARINPAL_MERCHANT_CODE}
+      ZARINPAL_SANDBOX: ${ZARINPAL_SANDBOX:-1}
+      OTP_EXPIRY_MINUTES: ${OTP_EXPIRY_MINUTES:-2}
+    volumes:
+      - ./staticfiles:/app/staticfiles
+      - ./media:/app/media
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    # Optional: run migrations and start Gunicorn
+    command: >
+      sh -c "python manage.py migrate --settings=bookstore_backend.settings.production &&
+             gunicorn --bind 0.0.0.0:8000 bookstore_backend.wsgi:application"
+
+volumes:
+  postgres_data:

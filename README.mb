@@ -1,0 +1,302 @@
+# 📚 Bookstore API
+
+A production-ready RESTful API for an online bookstore built with Django and Django REST Framework.
+
+The project provides secure phone number authentication using One-Time Passwords (OTP), JWT-based authorization, shopping cart management, payment gateway integration, and interactive API documentation.
+
+---
+
+## ✨ Features
+
+- 🔐 Phone number authentication (OTP)
+- 🔑 JWT authentication
+- 👤 User profile management
+- 📚 Book catalog
+- 🛒 Shopping cart
+- 💳 Payment gateway integration (Zarinpal)
+- 📄 Swagger & ReDoc API documentation
+- 🐳 Docker support
+- 📦 RESTful API
+- 🔍 Filtering and pagination
+
+---
+
+## 🛠 Tech Stack
+
+- Python 3.12
+- Django 6
+- Django REST Framework
+- JWT Authentication
+- SQLite (Development)
+- PostgreSQL (Docker / Production)
+- Docker & Docker Compose
+- Kavenegar SMS API
+- Zarinpal Payment Gateway
+- Swagger (drf-yasg)
+
+---
+
+### 📂 Project Structure
+
+```
+bookstore_backend/
+│
+├── apps/
+│   ├── accounts/
+│   │   ├── migrations/
+│   │   ├── views/
+│   │   │   ├── auth.py
+│   │   │   ├── profile.py
+│   │   │   └── __init__.py
+│   │   ├── admin.py
+│   │   ├── managers.py
+│   │   ├── models.py
+│   │   ├── serializers.py
+│   │   ├── services.py
+│   │   ├── urls.py
+│   │   └── permissions.py
+│   │
+│   ├── books/
+│   ├── cart/
+│   └── payments/
+│
+├── bookstore_backend/
+│   ├── settings/
+│   │   ├── base.py
+│   │   ├── development.py
+│   │   ├── production.py
+│   │   └── __init__.py
+│   ├── urls.py
+│   ├── asgi.py
+│   └── wsgi.py
+│
+├── media/
+├── Dockerfile
+├── docker-compose.yml
+├── requirements.txt
+├── manage.py
+├── .env
+├── API_DOCS.txt
+└── README.md
+```
+
+### Directory Overview
+
+| Directory | Description |
+|------------|-------------|
+| **apps/** | Contains all Django applications following a modular architecture. |
+| **accounts/** | User authentication, OTP login, JWT authentication, and profile management. |
+| **books/** | Book catalog and related business logic. |
+| **cart/** | Shopping cart functionality. |
+| **payments/** | Payment processing and gateway integration. |
+| **bookstore_backend/settings/** | Environment-specific Django settings (base, development, production). |
+| **media/** | Uploaded media files. |
+| **Dockerfile** | Docker image definition. |
+| **docker-compose.yml** | Multi-container Docker configuration. |
+| **requirements.txt** | Python project dependencies. |
+| **API_DOCS.txt** | API documentation notes. |
+
+
+---
+
+## 🚀 Getting Started
+
+### Clone the repository
+
+```bash
+git clone https://github.com/YOUR_USERNAME/bookstore-api.git
+
+cd bookstore-api
+```
+
+---
+
+### Create a virtual environment
+
+```bash
+python -m venv venv
+```
+
+Linux/macOS
+
+```bash
+source venv/bin/activate
+```
+
+Windows
+
+```bash
+venv\Scripts\activate
+```
+
+---
+
+### Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+The project dependencies include Django, Django REST Framework, JWT authentication, Docker-related packages, SMS integration, payment gateway support, and API documentation tools. :contentReference[oaicite:0]{index=0}
+
+---
+
+### Environment Variables
+
+Create a `.env` file.
+
+Example:
+
+```env
+SECRET_KEY=your-secret-key
+
+DEBUG=True
+
+KAVENEGAR_API_KEY=your-kavenegar-api-key
+
+DATABASE_NAME=bookstore
+
+DATABASE_USER=postgres
+
+DATABASE_PASSWORD=postgres
+
+DATABASE_HOST=db
+
+DATABASE_PORT=5432
+```
+
+---
+
+### Apply migrations
+
+```bash
+python manage.py migrate
+```
+
+---
+
+### Create a superuser
+
+```bash
+python manage.py createsuperuser
+```
+
+---
+
+### Run the development server
+
+```bash
+python manage.py runserver
+```
+
+---
+
+## 🐳 Docker
+
+Build the project
+
+```bash
+docker compose build
+```
+
+Run the containers
+
+```bash
+docker compose up
+```
+
+Stop
+
+```bash
+docker compose down
+```
+
+---
+
+## 📖 API Documentation
+
+Swagger UI
+
+```
+http://localhost:8000/swagger/
+```
+
+ReDoc
+
+```
+http://localhost:8000/redoc/
+```
+
+These endpoints are included in the project for interactive API exploration. :contentReference[oaicite:1]{index=1}
+
+---
+
+## 🔑 Authentication Flow
+
+1. Register using a phone number
+2. Request an OTP code
+3. Verify the OTP
+4. Receive JWT Access & Refresh Tokens
+5. Authenticate future requests using:
+
+```
+Authorization: Bearer <access_token>
+```
+
+---
+
+## 📌 Main API Endpoints
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/api/accounts/register/` | Register a new user |
+| POST | `/api/accounts/send-otp/` | Request an OTP |
+| POST | `/api/accounts/verify-otp/` | Verify OTP |
+| GET | `/api/accounts/profile/` | Retrieve user profile |
+| PATCH | `/api/accounts/profile/` | Update user profile |
+
+---
+
+## 🧪 Running Tests
+
+```bash
+python manage.py test
+```
+
+---
+
+## 📦 Future Improvements
+
+- Email verification
+- Password reset
+- Order history
+- Wishlist
+- Product reviews
+- Docker production deployment
+- CI/CD with GitHub Actions
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome.
+
+Feel free to open an issue or submit a pull request.
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+---
+
+## 👨‍💻 Author
+
+Mohammad Arabameri
+
+GitHub:
+https://github.com/YOUR_USERNAME
+
+LinkedIn:
+https://www.linkedin.com/in/YOUR_LINKEDIN
