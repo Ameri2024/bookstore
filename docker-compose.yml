@@ -24,6 +24,7 @@ services:
     container_name: bookstore_web
     restart: unless-stopped
     environment:
+      PIP_INDEX_URL: https://package-mirror.liara.ir/repository/pypi/simple
       DJANGO_SETTINGS_MODULE: bookstore_backend.settings.production
       # Read all environment variables from .env file
       SECRET_KEY: ${SECRET_KEY}
@@ -47,9 +48,7 @@ services:
       db:
         condition: service_healthy
     # Optional: run migrations and start Gunicorn
-    command: >
-      sh -c "python manage.py migrate --settings=bookstore_backend.settings.production &&
-             gunicorn --bind 0.0.0.0:8000 bookstore_backend.wsgi:application"
+    command: sh -c "python manage.py migrate --settings=bookstore_backend.settings.production && gunicorn --bind 0.0.0.0:8000 --workers=2 --threads=2 --timeout=300 --graceful-timeout=30 --preload --log-level debug bookstore_backend.wsgi:application"
 
 volumes:
   postgres_data:

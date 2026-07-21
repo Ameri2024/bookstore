@@ -1,35 +1,40 @@
-# Use the official Python slim image for a smaller footprint
-FROM python:3.12-slim
+# Use the Debian bookworm-based slim image
+FROM python:3.12-slim-bookworm
 
-# Set environment variables to prevent Python from writing .pyc files and to buffer stdout
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
-# Set work directory
 WORKDIR /app
 
-# Install system dependencies required for PostgreSQL, Pillow, etc.
+# ------------------------------------------------------------
+# Configure Liara Debian Mirror (for bookworm)
+# ------------------------------------------------------------
+RUN echo "deb https://linux-mirror.liara.ir/repository/debian bookworm main non-free-firmware" > /etc/apt/sources.list && \
+    echo "deb https://linux-mirror.liara.ir/repository/debian-security bookworm-security main non-free-firmware" >> /etc/apt/sources.list && \
+    echo "deb https://linux-mirror.liara.ir/repository/debian bookworm-updates main non-free-firmware" >> /etc/apt/sources.list
+
+# Install system dependencies (now they will install correctly)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     libpq-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements first to leverage Docker caching
-COPY requirements.txt /app/
+# ------------------------------------------------------------
+# Configure Liara PyPI Mirror
+# ------------------------------------------------------------
+ENV PIP_INDEX_URL=https://package-mirror.liara.ir/repository/pypi/simple
 
-# Install Python dependencies
+# Copy requirements and install Python packages
+COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip \
     && pip install --no-cache-dir -r requirements.txt
 
-# Copy the entire project into the container
-COPY . /app/
+COPY . .
 
-# Collect static files (optional – you can also run this at startup)
 RUN python manage.py collectstatic --noinput --settings=bookstore_backend.settings.production
 
-# Expose the port Gunicorn will listen on
 EXPOSE 8000
 
-# Start Gunicorn with the production settings
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "bookstore_backend.wsgi:application"]
+# Use a robust Gunicorn command (preload, longer timeout)
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers=2", "--threads=2", "--timeout=120", "--preload", "bookstore_backend.wsgi:application"]
